@@ -225,7 +225,7 @@ int decode_header(struct mad_header *header, struct mad_stream *stream)
 
   /* crc_check */
   if (header->flags & MAD_FLAG_PROTECTION)
-    header->crc_target = mad_bit_read(&stream->ptr, 16);
+    header->crc_target = (unsigned short)mad_bit_read(&stream->ptr, 16);
 
   return 0;
 }
@@ -240,7 +240,7 @@ int free_bitrate(struct mad_stream *stream, struct mad_header const *header)
   struct mad_bitptr keep_ptr;
   unsigned long rate = 0;
   unsigned int pad_slot, slots_per_frame;
-  unsigned char const *ptr = 0;
+  unsigned char const *ptr;
 
   keep_ptr = stream->ptr;
 
@@ -314,7 +314,7 @@ int mad_header_decode(struct mad_header *header, struct mad_stream *stream)
     if (!stream->sync)
       ptr = stream->this_frame;
 
-    if (end - ptr < stream->skiplen) {
+    if ((size_t)(end - ptr) < stream->skiplen) {
       stream->skiplen   -= end - ptr;
       stream->next_frame = end;
 
@@ -399,7 +399,7 @@ int mad_header_decode(struct mad_header *header, struct mad_stream *stream)
   }
 
   /* verify there is enough data left in buffer to decode this frame */
-  if (N + MAD_BUFFER_GUARD > end - stream->this_frame) {
+  if (N + MAD_BUFFER_GUARD > (size_t)(end - stream->this_frame)) {
     stream->next_frame = stream->this_frame;
 
     stream->error = MAD_ERROR_BUFLEN;

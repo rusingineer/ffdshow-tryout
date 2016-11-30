@@ -32,6 +32,7 @@
 
 #include "common.h"
 #include "structs.h"
+#include <string.h>
 
 #ifdef SBR_DEC
 

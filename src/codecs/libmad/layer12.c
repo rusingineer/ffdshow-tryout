@@ -160,7 +160,7 @@ int mad_layer_I(struct mad_stream *stream, struct mad_frame *frame)
   for (sb = 0; sb < 32; ++sb) {
     for (ch = 0; ch < nch; ++ch) {
       if (allocation[ch][sb]) {
-	scalefactor[ch][sb] = mad_bit_read(&stream->ptr, 6);
+	scalefactor[ch][sb] = (unsigned char)mad_bit_read(&stream->ptr, 6);
 
 # if defined(OPT_STRICT)
 	/*
@@ -402,14 +402,14 @@ int mad_layer_II(struct mad_stream *stream, struct mad_frame *frame)
     nbal = bitalloc_table[offsets[sb]].nbal;
 
     for (ch = 0; ch < nch; ++ch)
-      allocation[ch][sb] = mad_bit_read(&stream->ptr, nbal);
+      allocation[ch][sb] = (unsigned char)mad_bit_read(&stream->ptr, nbal);
   }
 
   for (sb = bound; sb < sblimit; ++sb) {
     nbal = bitalloc_table[offsets[sb]].nbal;
 
     allocation[0][sb] =
-    allocation[1][sb] = mad_bit_read(&stream->ptr, nbal);
+    allocation[1][sb] = (unsigned char)mad_bit_read(&stream->ptr, nbal);
   }
 
   /* decode scalefactor selection info */
@@ -417,7 +417,7 @@ int mad_layer_II(struct mad_stream *stream, struct mad_frame *frame)
   for (sb = 0; sb < sblimit; ++sb) {
     for (ch = 0; ch < nch; ++ch) {
       if (allocation[ch][sb])
-	scfsi[ch][sb] = mad_bit_read(&stream->ptr, 2);
+	scfsi[ch][sb] = (unsigned char)mad_bit_read(&stream->ptr, 2);
     }
   }
 
@@ -440,7 +440,7 @@ int mad_layer_II(struct mad_stream *stream, struct mad_frame *frame)
   for (sb = 0; sb < sblimit; ++sb) {
     for (ch = 0; ch < nch; ++ch) {
       if (allocation[ch][sb]) {
-	scalefactor[ch][sb][0] = mad_bit_read(&stream->ptr, 6);
+	scalefactor[ch][sb][0] = (unsigned char)mad_bit_read(&stream->ptr, 6);
 
 	switch (scfsi[ch][sb]) {
 	case 2:
@@ -450,12 +450,12 @@ int mad_layer_II(struct mad_stream *stream, struct mad_frame *frame)
 	  break;
 
 	case 0:
-	  scalefactor[ch][sb][1] = mad_bit_read(&stream->ptr, 6);
+	  scalefactor[ch][sb][1] = (unsigned char)mad_bit_read(&stream->ptr, 6);
 	  /* fall through */
 
 	case 1:
 	case 3:
-	  scalefactor[ch][sb][2] = mad_bit_read(&stream->ptr, 6);
+	  scalefactor[ch][sb][2] = (unsigned char)mad_bit_read(&stream->ptr, 6);
 	}
 
 	if (scfsi[ch][sb] & 1)

@@ -595,7 +595,10 @@ void synth_full(struct mad_synth *synth, struct mad_frame const *frame,
       MLA(hi, lo, (*fx)[5], ptr[ 6]);
       MLA(hi, lo, (*fx)[6], ptr[ 4]);
       MLA(hi, lo, (*fx)[7], ptr[ 2]);
-      MLN(hi, lo);
+#pragma warning(push)
+#pragma warning(disable: 4146)
+	  MLN(hi, lo);
+#pragma warning(pop)
 
       ptr = *Dptr + pe;
       MLA(hi, lo, (*fe)[0], ptr[ 0]);
@@ -626,7 +629,10 @@ void synth_full(struct mad_synth *synth, struct mad_frame const *frame,
 	MLA(hi, lo, (*fo)[5], ptr[ 6]);
 	MLA(hi, lo, (*fo)[6], ptr[ 4]);
 	MLA(hi, lo, (*fo)[7], ptr[ 2]);
+#pragma warning(push)
+#pragma warning(disable: 4146)
 	MLN(hi, lo);
+#pragma warning(pop)
 
 	ptr = *Dptr + pe;
 	MLA(hi, lo, (*fe)[7], ptr[ 2]);
@@ -732,7 +738,10 @@ void synth_half(struct mad_synth *synth, struct mad_frame const *frame,
       MLA(hi, lo, (*fx)[5], ptr[ 6]);
       MLA(hi, lo, (*fx)[6], ptr[ 4]);
       MLA(hi, lo, (*fx)[7], ptr[ 2]);
-      MLN(hi, lo);
+#pragma warning(push)
+#pragma warning(disable: 4146)
+	  MLN(hi, lo);
+#pragma warning(pop)
 
       ptr = *Dptr + pe;
       MLA(hi, lo, (*fe)[0], ptr[ 0]);
@@ -764,7 +773,10 @@ void synth_half(struct mad_synth *synth, struct mad_frame const *frame,
 	  MLA(hi, lo, (*fo)[5], ptr[ 6]);
 	  MLA(hi, lo, (*fo)[6], ptr[ 4]);
 	  MLA(hi, lo, (*fo)[7], ptr[ 2]);
+#pragma warning(push)
+#pragma warning(disable: 4146)
 	  MLN(hi, lo);
+#pragma warning(pop)
 
 	  ptr = *Dptr + pe;
 	  MLA(hi, lo, (*fe)[7], ptr[ 2]);

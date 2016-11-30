@@ -523,7 +523,7 @@ enum mad_error III_sideinfo(struct mad_bitptr *ptr, unsigned int nch,
     ngr = 2;
 
     for (ch = 0; ch < nch; ++ch)
-      si->scfsi[ch] = mad_bit_read(ptr, 4);
+      si->scfsi[ch] = (unsigned char)mad_bit_read(ptr, 4);
   }
 
   for (gr = 0; gr < ngr; ++gr) {
@@ -532,10 +532,10 @@ enum mad_error III_sideinfo(struct mad_bitptr *ptr, unsigned int nch,
     for (ch = 0; ch < nch; ++ch) {
       struct channel *channel = &granule->ch[ch];
 
-      channel->part2_3_length    = mad_bit_read(ptr, 12);
-      channel->big_values        = mad_bit_read(ptr, 9);
-      channel->global_gain       = mad_bit_read(ptr, 8);
-      channel->scalefac_compress = mad_bit_read(ptr, lsf ? 9 : 4);
+      channel->part2_3_length    = (unsigned short)mad_bit_read(ptr, 12);
+      channel->big_values        = (unsigned short)mad_bit_read(ptr, 9);
+      channel->global_gain       = (unsigned short)mad_bit_read(ptr, 8);
+      channel->scalefac_compress = (unsigned short)mad_bit_read(ptr, lsf ? 9 : 4);
 
       *data_bitlen += channel->part2_3_length;
 
@@ -546,7 +546,7 @@ enum mad_error III_sideinfo(struct mad_bitptr *ptr, unsigned int nch,
 
       /* window_switching_flag */
       if (mad_bit_read(ptr, 1)) {
-	channel->block_type = mad_bit_read(ptr, 2);
+	channel->block_type = (unsigned char)mad_bit_read(ptr, 2);
 
 	if (channel->block_type == 0 && result == 0)
 	  result = MAD_ERROR_BADBLOCKTYPE;
@@ -563,27 +563,27 @@ enum mad_error III_sideinfo(struct mad_bitptr *ptr, unsigned int nch,
 	  channel->region0_count = 8;
 
 	for (i = 0; i < 2; ++i)
-	  channel->table_select[i] = mad_bit_read(ptr, 5);
+	  channel->table_select[i] = (unsigned char)mad_bit_read(ptr, 5);
 
 # if defined(DEBUG)
 	channel->table_select[2] = 4;  /* not used */
 # endif
 
 	for (i = 0; i < 3; ++i)
-	  channel->subblock_gain[i] = mad_bit_read(ptr, 3);
+	  channel->subblock_gain[i] = (unsigned char)mad_bit_read(ptr, 3);
       }
       else {
 	channel->block_type = 0;
 
 	for (i = 0; i < 3; ++i)
-	  channel->table_select[i] = mad_bit_read(ptr, 5);
+	  channel->table_select[i] = (unsigned char)mad_bit_read(ptr, 5);
 
-	channel->region0_count = mad_bit_read(ptr, 4);
-	channel->region1_count = mad_bit_read(ptr, 3);
+	channel->region0_count = (unsigned char)mad_bit_read(ptr, 4);
+	channel->region1_count = (unsigned char)mad_bit_read(ptr, 3);
       }
 
       /* [preflag,] scalefac_scale, count1table_select */
-      channel->flags |= mad_bit_read(ptr, lsf ? 2 : 3);
+      channel->flags |= (unsigned char)mad_bit_read(ptr, lsf ? 2 : 3);
     }
   }
 
@@ -644,7 +644,7 @@ unsigned int III_scalefactors_lsf(struct mad_bitptr *ptr,
     n = 0;
     for (part = 0; part < 4; ++part) {
       for (i = 0; i < nsfb[part]; ++i)
-	channel->scalefac[n++] = mad_bit_read(ptr, slen[part]);
+	channel->scalefac[n++] = (unsigned char)mad_bit_read(ptr, slen[part]);
     }
 
     while (n < 39)
@@ -728,11 +728,11 @@ unsigned int III_scalefactors(struct mad_bitptr *ptr, struct channel *channel,
 
     nsfb = (channel->flags & mixed_block_flag) ? 8 + 3 * 3 : 6 * 3;
     while (nsfb--)
-      channel->scalefac[sfbi++] = mad_bit_read(ptr, slen1);
+      channel->scalefac[sfbi++] = (unsigned char)mad_bit_read(ptr, slen1);
 
     nsfb = 6 * 3;
     while (nsfb--)
-      channel->scalefac[sfbi++] = mad_bit_read(ptr, slen2);
+      channel->scalefac[sfbi++] = (unsigned char)mad_bit_read(ptr, slen2);
 
     nsfb = 1 * 3;
     while (nsfb--)
@@ -745,7 +745,7 @@ unsigned int III_scalefactors(struct mad_bitptr *ptr, struct channel *channel,
     }
     else {
       for (sfbi = 0; sfbi < 6; ++sfbi)
-	channel->scalefac[sfbi] = mad_bit_read(ptr, slen1);
+	channel->scalefac[sfbi] = (unsigned char)mad_bit_read(ptr, slen1);
     }
 
     if (scfsi & 0x4) {
@@ -754,7 +754,7 @@ unsigned int III_scalefactors(struct mad_bitptr *ptr, struct channel *channel,
     }
     else {
       for (sfbi = 6; sfbi < 11; ++sfbi)
-	channel->scalefac[sfbi] = mad_bit_read(ptr, slen1);
+	channel->scalefac[sfbi] = (unsigned char)mad_bit_read(ptr, slen1);
     }
 
     if (scfsi & 0x2) {
@@ -763,7 +763,7 @@ unsigned int III_scalefactors(struct mad_bitptr *ptr, struct channel *channel,
     }
     else {
       for (sfbi = 11; sfbi < 16; ++sfbi)
-	channel->scalefac[sfbi] = mad_bit_read(ptr, slen2);
+	channel->scalefac[sfbi] = (unsigned char)mad_bit_read(ptr, slen2);
     }
 
     if (scfsi & 0x1) {
@@ -772,7 +772,7 @@ unsigned int III_scalefactors(struct mad_bitptr *ptr, struct channel *channel,
     }
     else {
       for (sfbi = 16; sfbi < 21; ++sfbi)
-	channel->scalefac[sfbi] = mad_bit_read(ptr, slen2);
+	channel->scalefac[sfbi] = (unsigned char)mad_bit_read(ptr, slen2);
     }
 
     channel->scalefac[21] = 0;
@@ -1052,7 +1052,7 @@ enum mad_error III_huffdecode(struct mad_bitptr *ptr, mad_fixed_t xr[576],
 	  break;
 
 	case 15:
-	  if (cachesz < linbits + 2) {
+	  if (cachesz < (int)(linbits + 2)) {
 	    bitcache   = (bitcache << 16) | mad_bit_read(&peek, 16);
 	    cachesz   += 16;
 	    bits_left -= 16;
@@ -1087,7 +1087,7 @@ enum mad_error III_huffdecode(struct mad_bitptr *ptr, mad_fixed_t xr[576],
 	  break;
 
 	case 15:
-	  if (cachesz < linbits + 1) {
+	  if (cachesz < (int)(linbits + 1)) {
 	    bitcache   = (bitcache << 16) | mad_bit_read(&peek, 16);
 	    cachesz   += 16;
 	    bits_left -= 16;
